@@ -40,6 +40,30 @@ the dial is inert; route by tier alone.
   at the highest permitted tier, a higher effort dial is the only
   escalation left — same evidence standard, same budget.
 
+## Other providers: Codex, Grok, Antigravity lanes
+
+The same tiers apply to every lane, not only Claude's. A lane's default is
+its cheapest model that would succeed in one pass; the provider's main or
+frontier model is reserved for T3 work or an evidenced escalation, exactly
+as for Claude.
+
+| Lane | Cheap default (alias + source) | Main model (alias + source) | How it's set today |
+|------|------|------|------|
+| Codex | `gpt-5.3-codex-spark` — DELEGATION.md:218 (the Mac's Codex default) | fill from the CLI's model list — `codex --help`/`codex exec --help` expose a `-m/--model` flag but no model catalog | `~/.codex/config.toml` `model` key; no per-job flag in delegate.ps1/.sh. This PC's config.toml pins `model = "gpt-6-astra"`, which the ChatGPT account rejects — a broken pin, not a chosen tier |
+| Grok | `grok-4.6` — `grok models` output ("Default model: grok-4.6", the only model it lists) | fill from the CLI's model list — this account exposes one model today; DELEGATION.md:218 separately records a Mac Look job answering on `grok-4.6-build` | CLI default; no per-job flag in delegate.ps1/.sh |
+| Antigravity | fill from the CLI's model list — `agy models` lists 14 names (gemini-3.8/3.7/3.6-flash at high/medium/low, gemini-3.1-pro at high/low, `claude-sonnet-4-6`, `claude-opus-4-6-thinking`, `gpt-oss-120b-medium`) with none marked default | fill from the CLI's model list — same output, no cheap/main split visible | CLI default; no per-job flag in delegate.ps1/.sh |
+| Claude lane | `haiku` — this skill's tier table (T1) | `opus` — this skill's tier table (T3; `fable`/T4 stays escalation-only) | `-Model` / `-Effort` on delegate.ps1, restricted to haiku/sonnet/opus/fable |
+
+The gap to close: delegate.ps1 and delegate.sh pass no model for the Codex,
+Grok, or Antigravity lanes, so the config default decides every job today.
+The next dispatcher version takes a per-lane model flag; until then, a
+session that needs the cheap tier on one of these lanes records which model
+it wanted in the job's record.
+
+The adaptation rule already in this skill applies here too: the live CLI
+list wins over this table, and the table gets corrected in the same session
+it's found wrong.
+
 ## Routing rules
 
 1. **Pick the lowest tier that would succeed in one pass.** If you hesitate
