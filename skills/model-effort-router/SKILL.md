@@ -64,6 +64,7 @@ it's found wrong.
 
 1. **Pick the lowest tier that would succeed in one pass.** If you hesitate
    between two tiers, take the lower one — escalation is cheap, waste is not.
+   A hesitation between two tiers on a clearly specified task takes the lower. A task whose requirements themselves are ambiguous is never T1: surface the competing readings and route T2 or higher.
 2. **Escalate on evidence, never on prestige.** The ladder: one retry at the
    same tier — sharpened with the failure evidence, which is new information,
    so the retry is never identical, and raised on the effort dial when the
@@ -86,6 +87,7 @@ it's found wrong.
    checked by an equally cheap reviewer is a correlated failure. A cheap
    result that will be trusted without anyone reading the source material
    is consequence-bearing too.
+   An irreversible or outward action (delete, force-push, deploy, publish, send, purchase, push to a new remote) is never embedded inside a larger task: it is its own task, dispatched only after explicit user confirmation, no matter how small.
 5. **The main loop delegates — above the overhead line.** When the main model
    is a top-tier model, doing T1/T2 work inline is the same mistake as routing
    it to T4 — hand it down. But a subagent spawn has real fixed cost: if
@@ -159,16 +161,9 @@ not inherit this skill, so the prompt must carry the rules:
    abstractions for single-use code, no speculative flexibility, no error
    handling for impossible cases. If 200 lines could be 50, rewrite. Test:
    "would a senior engineer call this overcomplicated?"
-3. **Touch only what you must.** No improving adjacent code, comments, or
-   formatting. Match the existing style even when you'd choose differently.
-   Remove only the orphans *your* change created; mention (don't delete)
-   pre-existing dead code.
-4. **Define done before starting.** Turn every task into a verifiable goal
-   ("fix the bug" → "write a test that reproduces it, then make it pass") and
-   include that success criterion in the delegated prompt. Iterate until
-   verified, escalating per the routing rules and always inside the attempt
-   budget below — "not verified yet" never overrides the budget's terminal
-   state.
+3. Touch only what you must. Every task declares the exact files it may touch; touching anything else is a failed task, not a style issue. Verifiers edit nothing. No improving adjacent code; remove only the orphans your own change created.
+4. Define done before starting. Every task carries 2–6 binary criteria, each a command plus its expected result — "improve" is not a criterion — including at least one a stub or fake would fail, and none checkable only by something the author itself wrote or edited. A deliverable with a fixed shape (versioned file, report, form) gets one criterion per required part; a missing part is a fail, not a done.
+5. No invented facts. Never state or use a model alias, name, host, URL, path, account, port, or version that the task, the environment, or the tier table did not provide. Joining two known facts into a third ("X runs on Y, so X's address is Y's") is invention. A missing fact is returned as blocked — named, never guessed.
 
 These disciplines feed the router: a task stripped to its smallest verifiable
 form is cheaper to classify and usually routes lower.
@@ -230,6 +225,8 @@ in a report, not another spawn:
    exact blocker, and the smallest step that would unblock it. A precise
    "blocked because X" report is a successful outcome; a loop never is.
 
+Blocked is always allowed, costs nothing, and is never a mark against the agent. The one thing that fails an agent is a "done" whose commands did not run or whose result used a fact it was not given. Inside a single attempt, the same check failing 3 times ends the attempt as blocked — a count, not a judgment.
+
 ## Checkpoint verification — audit the build, not just the pieces
 
 Routing rule 4 verifies each delegation. On multi-step work the
@@ -272,13 +269,13 @@ usable material to the next. The system's output depends on the hand-offs.
    done, what failed and why (exact errors, verbatim), and the one question
    that remains. Escalating without the failure evidence pays for the same
    discovery twice.
-3. **Every agent returns material, not narrative**: paths, diffs, failing
-   commands, extracted facts — whatever the next agent can act on directly.
+3. Agents return a fixed form, nothing else: status done|blocked; files touched; commands run with exit codes; blocked reason or none; unknowns (every fact the task did not give you and you needed). Prose outside the form is discarded. Unknowns become context in the next dispatch.
 4. **The verifier is never the author** (sized by routing rule 4). Fresh eyes
    are the point; a self-reviewing agent is a correlated failure.
 5. **Parallel agents get disjoint scopes.** Overlap buys the same tokens
    twice and merges into conflicts. Split by file, module, or question —
    never by "everyone look at everything."
+6. Every failed or blocked task yields a one-line lesson (cause → rule). Applicable lessons are included as constraints in every later dispatch of the run. A pitfall discovered once is never rediscovered at any tier.
 
 ## Delegated-prompt template
 
@@ -294,6 +291,8 @@ tier table and `effort` from the dial where the environment takes one. On
 multi-step tasks, name in each delegated prompt which of the spec anchor's
 done-criteria it serves, so checkpoint verifiers can trace every artifact
 back to the spec.
+
+Preflight: before touching any file, read every criterion and every fact you were given; if a criterion cannot be checked with the tools provided, or a needed fact is missing, return blocked now, naming it. No work starts on a task that cannot be finished.
 
 ## Quick examples
 
