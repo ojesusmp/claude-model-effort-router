@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.5.0] - 2026-09-24
+## [1.5.0] - 2026-09-25
 
 Brings the router's execution rules into line with the fleet Orchestrator
 SOP, so a task dispatched under either one reads the same contract.
@@ -29,6 +29,10 @@ SOP, so a task dispatched under either one reads the same contract.
   constraint into every later dispatch of the run.
 - Quiz questions (p) through (x) added to test/routing-quiz.txt, one per
   change above, with expected answers in the README Verification list.
+- SKILL.md now also carries the "Other providers: Codex, Grok,
+  Antigravity lanes" section (the same tiers apply to every lane),
+  merged from commits 3b9e2a4 and 54d8237 of 2026-09-19 that had no
+  changelog line.
 
 ### Changed
 
