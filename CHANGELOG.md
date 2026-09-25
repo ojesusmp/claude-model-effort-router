@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-09-24
+
+Brings the router's execution rules into line with the fleet Orchestrator
+SOP, so a task dispatched under either one reads the same contract.
+
+### Added
+
+- **No invented facts**, new execution discipline rule 5: never state or
+  use a model alias, host, URL, path, account, port, or version the task
+  did not provide; joining two known facts into a third counts as
+  invention; a missing fact returns blocked, named, not guessed.
+- **Preflight** step added to the delegated-prompt template: read every
+  criterion and every fact before touching a file; an uncheckable
+  criterion or a missing fact returns blocked before work starts.
+- **Blocked is always allowed**, added to the attempt budget: it costs
+  nothing and is never a mark against the agent. What fails an agent is a
+  "done" whose commands did not run or that used a fact it was not given.
+  The same check failing 3 times inside one attempt ends that attempt as
+  blocked, a count, not a judgment.
+- **One-line lesson**, new cooperation protocol item 6: every failed or
+  blocked task yields a one-line lesson (cause to rule), carried as a
+  constraint into every later dispatch of the run.
+- Quiz questions (p) through (x) added to test/routing-quiz.txt, one per
+  change above, with expected answers in the README Verification list.
+
+### Changed
+
+- Routing rule 1 appended: hesitation between two tiers on a clearly
+  specified task takes the lower; a task whose requirements are
+  themselves ambiguous is never T1, surface the competing readings and
+  route T2 or higher.
+- **Define done before starting**, execution discipline rule 4, replaced:
+  every task now carries 2-6 binary criteria, each a command plus its
+  expected result, including at least one a stub would fail, and none
+  checkable only by the author's own work; a fixed-shape deliverable
+  gets one criterion per required part.
+- **Touch only what you must**, execution discipline rule 3, replaced:
+  every task declares the exact file scope it may touch; touching
+  anything else is a failed task, not a style issue; verifiers edit
+  nothing.
+- Cooperation protocol item 3 replaced: agents return a fixed form and
+  nothing else — status done or blocked, files touched, commands run
+  with exit codes, blocked reason, unknowns; prose outside the form is
+  discarded; unknowns become context in the next dispatch.
+- Routing rule 4 appended: an irreversible or outward action (delete,
+  force-push, deploy, publish, send, purchase, push to a new remote) is
+  never embedded in a larger task; it gets its own task, dispatched only
+  after explicit user confirmation.
+- README restatements of the changed sections updated to match.
+
 ## [1.4.1] - 2026-07-15
 
 ### Changed
@@ -295,6 +345,7 @@ defects at the seams of the fixes, also closed before release:
 - npm postinstall installer (`bin/install.mjs`), Claude Code plugin marketplace
   manifest, and full repository documentation.
 
+[1.5.0]: https://github.com/ojesusmp/model-effort-router/releases/tag/v1.5.0
 [1.4.1]: https://github.com/ojesusmp/model-effort-router/releases/tag/v1.4.1
 [1.4.0]: https://github.com/ojesusmp/model-effort-router/releases/tag/v1.4.0
 [1.3.1]: https://github.com/ojesusmp/model-effort-router/releases/tag/v1.3.1
