@@ -10,11 +10,13 @@
 
 Because the skill defines **stable capability bands** rather than hardcoded model names, it survives model launches, renames, and retirements: when the lineup changes, the router adapts by rule, and maintenance is a one-cell table edit.
 
-It also embeds an execution discipline into every routed task — surface assumptions, build the smallest thing that works, touch only what you must, define a verifiable "done" before starting — so cheaper models stay reliable and expensive models stay scoped.
+It also embeds an execution discipline into every routed task — surface assumptions, build the smallest thing that works, touch only what you must, define a verifiable "done" before starting, never invent a fact — so cheaper models stay reliable and expensive models stay scoped.
 
 Since v1.3.0 the router is also **guaranteed to terminate** (a hard attempt budget with a defined terminal state — no retry loop, no runaway spawning, at any delegation depth) and **cooperative by design**: cheap scouts gather context for bigger workers, every escalation hands forward the failure evidence so no tier pays for the same discovery twice, and verification is always done by fresh eyes.
 
 Since v1.4.0 it also routes **reasoning effort**, not just model tier (raise effort before tier — the half-step that often saves a whole jump), knows what to do when the **main loop itself** is outmatched (a one-line escalation request to the user, pausing the failing step — the router can't promote itself), and **audits multi-step builds at checkpoints**: a fresh-context verifier checks the accumulated work against the original specification, never against summaries, which is where drift hides.
+
+Since v1.5.0 its execution rules match the fleet Orchestrator SOP: every task declares its exact file scope, carries 2–6 done criteria checked by commands, and opens with a **preflight**; agents return a **fixed form** that lists their unknowns; **blocked is a free outcome**, never a mark against the agent; and every failed or blocked task leaves a one-line lesson that is carried into every later dispatch of the run.
 
 ---
 
@@ -115,10 +117,10 @@ Tier buys capability; reasoning effort buys depth at the same tier. Where the en
 
 ### Routing rules
 
-1. **Pick the lowest tier that would succeed in one pass.** When hesitating between two tiers, take the lower — escalation is cheap, waste is not.
+1. **Pick the lowest tier that would succeed in one pass.** When hesitating between two tiers on a clearly specified task, take the lower — escalation is cheap, waste is not. A task whose requirements themselves are ambiguous is never T1: the competing readings are surfaced and it routes T2 or higher.
 2. **Escalate on evidence, never on prestige.** The ladder: one retry at the same tier — sharpened with the failure evidence, so never identical, and raised on the effort dial when the failure reads as shallow reasoning — then one tier up, always within the [attempt budget](#attempt-budget), always carrying the [hand-off brief](#cooperation-protocol). A clear misroute skips the ladder: the task jumps straight to the tier the evidence indicates — topping out at T3, because T4's escalation gate (a demonstrably failed T3 attempt or an explicit user request) always holds; taste-phase routing is a pre-authorized dispatch, never an escalation destination. The reason for escalating is stated in one line of the report to the user — that line is the routing record.
 3. **Shrink before you route.** A task scoped to its smallest correct version often drops a whole tier. Mixed tasks get split: the search part is T1 even when the fix part is T3.
-4. **Verification is sized like work — but consequence outranks size.** Small → T1, standard → T2, large or security-sensitive → T3. Exception: anything that publishes, ships to production, or is hard to reverse gets at least T2 verification by an agent that didn't author it (T3 when the blast radius is real), no matter how small the change. A cheap author checked by an equally cheap reviewer is a correlated failure.
+4. **Verification is sized like work — but consequence outranks size.** Small → T1, standard → T2, large or security-sensitive → T3. Exception: anything that publishes, ships to production, or is hard to reverse gets at least T2 verification by an agent that didn't author it (T3 when the blast radius is real), no matter how small the change. A cheap author checked by an equally cheap reviewer is a correlated failure. An irreversible or outward action (delete, force-push, deploy, publish, send, purchase, push to a new remote) is never embedded inside a larger task: it is its own task, dispatched only after explicit user confirmation, no matter how small.
 5. **The main loop delegates — above the overhead line.** When the main conversation runs on a top-tier model, doing T1/T2 work inline is the same mistake as routing it to T4. But a subagent spawn has real fixed cost: one-liners and single lookups are done inline. Delegation pays for real work, not micro-tasks.
 
 ### Upward escalation
@@ -144,12 +146,13 @@ This is what keeps the skill alive across model generations:
 
 ### Execution discipline
 
-Every routed task — and every prompt handed to a subagent, since subagents don't inherit skills — carries four rules:
+Every routed task — and every prompt handed to a subagent, since subagents don't inherit skills — carries five rules. Every delegated prompt also carries a **preflight**: before touching any file, the agent reads every criterion and every fact it was given, and if a criterion can't be checked with the tools provided or a needed fact is missing, it returns blocked now, naming it. No work starts on a task that can't be finished. The five rules:
 
 1. **Surface before you build.** State assumptions explicitly; present competing interpretations instead of silently picking one; push back when a simpler approach exists.
 2. **Smallest thing that works.** No features beyond what was asked, no abstractions for single-use code, no speculative flexibility.
-3. **Touch only what you must.** No improving adjacent code; match the existing style; remove only the orphans your own change created.
-4. **Define done before starting.** Every task becomes a verifiable goal with its success criterion included in the delegated prompt.
+3. **Touch only what you must.** Every task declares the exact files it may touch; touching anything else is a failed task, not a style issue. Verifiers edit nothing. No improving adjacent code; remove only the orphans your own change created.
+4. **Define done before starting.** Every task carries 2–6 binary criteria, each a command plus its expected result ("improve" is not a criterion), at least one of which a stub or fake would fail, and none checkable only by something the author itself wrote or edited. A deliverable with a fixed shape (versioned file, report, form) gets one criterion per required part; a missing part is a fail, not a done.
+5. **No invented facts.** Never state or use a model alias, name, host, URL, path, account, port, or version that the task, the environment, or the tier table didn't provide. Joining two known facts into a third ("X runs on Y, so X's address is Y's") is invention. A missing fact comes back as blocked — named, never guessed.
 
 These disciplines feed the router: a task stripped to its smallest verifiable form is cheaper to classify and usually routes lower.
 
@@ -175,6 +178,8 @@ This is the anti-loop guarantee. Every routed task carries a hard budget, and wh
 4. **Verification has its own cap: 2 verify → fix → re-verify cycles.** Verifier spawns don't count as work spawns; a rejection is classified by the failure taxonomy, and after the second rejection the author escalates within the remaining budget or the task goes to the terminal state. An escalated author gets one fresh verification cap — once; if that is spent too, terminal state. Consequence-bearing work that cannot pass verification is reported as blocked, never shipped unverified.
 5. **Terminal state.** When the ceiling tier fails or the budget is spent, the orchestrator STOPS and reports: what was tried at which tiers, what is now known, the exact blocker, and the smallest unblocking step. A precise "blocked because X" report is a successful outcome; a loop never is.
 
+Blocked is always allowed, costs nothing, and is never a mark against the agent. The one thing that fails an agent is a "done" whose commands did not run or whose result used a fact it was not given. Inside a single attempt, the same check failing 3 times ends the attempt as blocked — a count, not a judgment.
+
 ### Checkpoint verification
 
 Routing rule 4 verifies each delegation; on multi-step work the orchestration itself is audited too, because every hand-off brief is a compression and drift compounds silently. Before the first spawn, the original specification is captured **verbatim** as the anchor, along with pass/fail done-criteria. Then, at countable triggers — every 3 completed delegations, any escalation, any re-scope, and always before reporting done — a **fresh-context subagent that authored nothing** checks the accumulated artifacts against that anchor, never against the transcript or a summary (summaries are where drift hides). Findings are reported verbatim, classified by the failure taxonomy, and fixed within the existing caps: one verifier spawn per trigger, 2 verify → fix → re-verify cycles, and work that cannot pass is reported blocked, never shipped unverified. Single-delegation tasks are exempt — their per-task verification is already the checkpoint.
@@ -185,9 +190,10 @@ Agents are organelles, not soloists — like a cell, the system's output depends
 
 1. **Scouts feed workers.** T1 gathers context (file locations, log extracts, signatures, repro commands) so higher tiers spend tokens only on the hard core, never on discovery a cheap model could do.
 2. **Hand-offs carry a brief, not a transcript**: the goal, what's done, what failed and why (exact errors, verbatim), and the one question that remains. Escalating without the failure evidence pays for the same discovery twice.
-3. **Agents return material, not narrative**: paths, diffs, failing commands, extracted facts — whatever the next agent can act on directly.
+3. **Agents return a fixed form, nothing else**: status done|blocked; files touched; commands run with exit codes; blocked reason or none; unknowns (every fact the task didn't give and the agent needed). Prose outside the form is discarded, and the unknowns become context in the next dispatch.
 4. **The verifier is never the author.** Fresh eyes are the point; a self-reviewing agent is a correlated failure.
 5. **Parallel agents get disjoint scopes** — split by file, module, or question, never "everyone look at everything."
+6. **Every failed or blocked task yields a one-line lesson** (cause → rule). Applicable lessons go into every later dispatch of the run as constraints, so a pitfall found once is never rediscovered at any tier.
 
 ---
 
@@ -282,7 +288,7 @@ and follow that pipeline against the target skill. Its own gate:
 - **Model lineup changed?** Edit the "Current alias" column in `skills/model-effort-router/SKILL.md` — nothing else. Bands, rules, and the adaptation protocol are deliberately model-agnostic. If you installed via npm or git, make the same edit in your clone of this repo too: package updates overwrite the installed copy.
 - **Different tier boundaries?** Move work types between the "Route here" cells. Keep the four-band structure: it matches how model families are actually positioned (fast / balanced / deep / flagship).
 - **Stricter escalation?** Change rule 2's "one retry, then one tier up" to your taste — e.g., two retries for expensive tiers.
-- **House discipline?** The four execution rules are a good default; append your own (e.g., "always run the linter") in the same numbered list.
+- **House discipline?** The five execution rules are a good default; append your own (e.g., "always run the linter") in the same numbered list.
 
 ---
 
@@ -301,7 +307,7 @@ To re-verify after editing the skill, run the bundled quiz mechanically (any che
 cat skills/model-effort-router/SKILL.md test/routing-quiz.txt | claude -p --model haiku
 ```
 
-Expected: (a) T1, (b) T2, (c) T3, (d) T1, (e) T4 with the removal reasoning, (f) at-least-T2 verification by a non-author citing consequence, (g) inline, (h) retry once at the same tier without escalating — a greeting-only reply is harness failure, not model failure, (i) stop — the ceiling tier is exhausted (2 attempts at T3 and at T4), terminal state: report what was tried and the exact blocker, no more spawns, (j) the hand-off brief: what T2 tried, the exact failures/evidence verbatim, and the success criterion, (k) all tiers map to the one alias; scoping, budget, and verification discipline unchanged, (l) no — prompt failure: fix the prompt, same tier, (m) a sharpened same-tier retry at a higher effort dial — the half-step before a tier jump, (n) a checkpoint: a fresh-context, non-author verifier checks the accumulated artifacts against the verbatim spec anchor before delegation four, (o) a one-line ESCALATE request to the user naming the evidence and expected fix, with that step paused until answered. Any drift from those answers means your edit broke a rule.
+Expected: (a) T1, (b) T2, (c) T3, (d) T1, (e) T4 with the removal reasoning, (f) at-least-T2 verification by a non-author citing consequence, (g) inline, (h) retry once at the same tier without escalating — a greeting-only reply is harness failure, not model failure, (i) stop — the ceiling tier is exhausted (2 attempts at T3 and at T4), terminal state: report what was tried and the exact blocker, no more spawns, (j) the hand-off brief: what T2 tried, the exact failures/evidence verbatim, and the success criterion, (k) all tiers map to the one alias; scoping, budget, and verification discipline unchanged, (l) no — prompt failure: fix the prompt, same tier, (m) a sharpened same-tier retry at a higher effort dial — the half-step before a tier jump, (n) a checkpoint: a fresh-context, non-author verifier checks the accumulated artifacts against the verbatim spec anchor before delegation four, (o) a one-line ESCALATE request to the user naming the evidence and expected fix, with that step paused until answered, (p) no — blocked, naming the missing port; a guessed default is an invented fact, (q) T2 or higher, never T1 — the requirements are ambiguous, so surface the competing readings, (r) (1) 2–6 binary criteria, (2) each a command plus its expected result ("improve" is not a criterion), (3) at least one that a stub or fake would fail, (4) a missing required part is a fail, not a done, (s) no — verifiers edit nothing, and touching a file outside the declared scope fails the task, (t) preflight: return blocked now, naming the criterion it can't check; no work starts, (u) the attempt ends as blocked — a count, not a judgment; blocked is always allowed and never a mark against the agent, (v) the fixed return form: status done|blocked, files touched, commands run with exit codes, blocked reason or none, unknowns; prose outside it is discarded, (w) a one-line lesson (cause → rule, e.g. "ran Node 18 → use Node 20") included as a constraint in every later dispatch of the run, (x) no — the force-push is irreversible, so it is its own task, dispatched only after explicit user confirmation. Any drift from those answers means your edit broke a rule. A cheap model occasionally drifts on format (a dropped letter label, a skipped letter) or shortens a multi-part answer, so rerun once before reading a miss as a broken rule; a repeated miss on the same letter is real.
 
 ---
 

@@ -4,11 +4,11 @@ Usage: cat skills/model-effort-router/SKILL.md test/routing-quiz.txt | claude -p
 (The Model Effort Router skill is quoted above this quiz.)
 
 ANSWER THE QUIZ IMMEDIATELY. No greeting, no tools, no questions — your reply
-is only the fifteen answers. You are an orchestrator in Claude Code that
+is only the twenty-four answers. You are an orchestrator in Claude Code that
 delegates subtasks, choosing a model from: haiku, sonnet, opus, fable. You
 MUST follow the Model Effort Router skill quoted above.
 
-Answer each with the model/tier (or "inline"/"stop") and ONE short reason:
+Answer each with the model/tier (or "inline"/"stop"/"blocked"/yes/no) and ONE short reason. Answer every part of a multi-part question, and start every answer with its letter in parentheses, like (a).
 (a) Find where the config file is loaded in a medium-size repo.
 (b) Add a --verbose flag to a CLI script plus one unit test.
 (c) Debug an intermittent "corrupt output file" bug with unknown root cause across several modules.
@@ -18,11 +18,20 @@ Answer each with the model/tier (or "inline"/"stop") and ONE short reason:
 (g) You need the value of one constant from a file you can read directly in one tool call. Delegate to haiku or do it inline?
 (h) A T1 subagent replies only "I'm here, how can I help?" with no answer. What do you do — and do you escalate the tier?
 (i) Task (c) failed twice at T3 and twice at T4. What is your next move?
-(j) You are escalating a debugging task from T2 to T3. Besides the task itself, what must the T3 prompt contain?
-(k) The environment accepts only ONE model alias. How do you route work now?
+(j) You are escalating a debugging task from T2 to T3. Besides the task itself, what must the T3 prompt contain? Name both what every delegated prompt carries (per the delegated-prompt template, including the success criterion) and what an escalation hand-off brief adds.
+(k) The Agent tool works and its model parameter accepts exactly ONE alias, so delegation still works, but only to that one model (this is not the no-delegatable-models case). How do you route work now: what does each tier (T1 to T4) map to, and which rules still apply?
 (l) A subagent produced the wrong result because your prompt never named the target directory. Do you escalate the tier?
 (m) A T2 agent missed an edge case on a judgment-heavy task, and the environment exposes an effort parameter. What is the next attempt?
-(n) You are orchestrating a multi-step build and the third delegation just completed. What must happen before the fourth?
+(n) You are orchestrating a multi-step build and the third delegation just completed. What must happen before the fourth, who does it, and against what?
 (o) Your own main-loop analysis has failed twice at the current tier and effort. What do you do?
+(p) A subagent must write the staging database's port into a config file; neither the task nor the environment gives the port, but 5432 is the usual default. Does it write 5432?
+(q) The user asks you to "make the export faster" with no target: it could mean caching results or rewriting the query, and you hesitate between T1 and T2. Which tier?
+(r) A task says only "improve the CSV export". Before work starts, per execution discipline 4: (1) how many criteria, (2) what shape each one takes, (3) what at least one of them must catch (a stub that writes an empty file passes otherwise), (4) what a missing required column counts as?
+(s) While verifying a T2 change, the verifier spots a typo in a neighboring file that is not in the task's declared scope and fixes it. Is that acceptable?
+(t) A delegated task's criterion is "the page renders correctly in Safari," but the subagent has no browser tool. What does it do before touching any file?
+(u) Inside one attempt, a subagent's same test check has failed 3 times with three different fixes. What happens to the attempt, and is it a mark against the agent?
+(v) A subagent finishes and replies with three paragraphs describing what it did. What must its reply be instead? Name every field.
+(w) A task failed because the build needs Node 20 and the agent ran Node 18. What do you write down after this failure, in what form, and where does it go for the rest of this run?
+(x) A T2 refactor task's last step reads "then force-push the branch to origin." Do you dispatch it as one task?
 
-Answers (a) through (o):
+Answers (a) through (x):

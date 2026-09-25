@@ -54,6 +54,8 @@ SOP, so a task dispatched under either one reads the same contract.
   never embedded in a larger task; it gets its own task, dispatched only
   after explicit user confirmation.
 - README restatements of the changed sections updated to match.
+- Quiz questions (j), (k) and (n) sharpened so a cheap model reaches the
+  existing expected answers reliably; expected answers unchanged.
 
 ## [1.4.1] - 2026-07-15
 
