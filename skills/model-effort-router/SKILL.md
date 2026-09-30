@@ -47,12 +47,14 @@ its cheapest model that would succeed in one pass; the provider's main or
 frontier model is reserved for T3 work or an evidenced escalation, exactly
 as for Claude.
 
+When a lane refuses its default model, check the CLI version against the latest release before changing the default, because model lists depend on the client version.
+
 | Lane | Cheap default (alias + source) | Main model (alias + source) | How it's set today |
 |------|------|------|------|
-| Codex | `gpt-5.3-codex-spark` — DELEGATION.md:218 (the Mac's Codex default) | fill from the CLI's model list — `codex --help`/`codex exec --help` expose a `-m/--model` flag but no model catalog | `-Model`/`--model` on delegate.ps1/.sh; default `gpt-5.3-codex-spark` from the lane table (how-we-work 54b3356). This PC's config.toml still pins `gpt-6-astra`, which only matters for Codex runs outside the dispatcher |
-| Grok | `grok-4.6` — `grok models` output ("Default model: grok-4.6", the only model it lists) | fill from the CLI's model list — this account exposes one model today; DELEGATION.md:218 separately records a Mac Look job answering on `grok-4.6-build` | `-Model`/`--model`; default `grok-4.6` from the lane table |
-| Antigravity | fill from the CLI's model list — `agy models` lists 14 names (gemini-3.8/3.7/3.6-flash at high/medium/low, gemini-3.1-pro at high/low, `claude-sonnet-4-6`, `claude-opus-4-6-thinking`, `gpt-oss-120b-medium`) with none marked default | fill from the CLI's model list — same output, no cheap/main split visible | `-Model`/`--model` passed when given; no default until one is chosen from `agy models` |
-| Claude lane | `haiku` — this skill's tier table (T1) | `opus` — this skill's tier table (T3; `fable`/T4 stays escalation-only) | `-Model` / `-Effort` on delegate.ps1, restricted to haiku/sonnet/opus/fable |
+| Codex | `gpt-6-luna` — Codex model list ("Fast and affordable model for easier tasks") | `gpt-5.6-terra` — Codex model list ("Older balanced model for straightforward work"; main model for T3 work) | `-Model`/`--model` on delegate.ps1/.sh; dispatcher cheap default `gpt-6-luna` |
+| Grok | `grok-4.7` — `grok models` ("Default model: grok-4.7") | `grok-4.7` — `grok models` (only model listed) | `-Model`/`--model`; dispatcher default `grok-4.7` |
+| Antigravity | fill from the CLI's model list — `agy models` re-checked 2026-09-30; lists 14 names (gemini-3.8/3.7/3.6-flash at high/medium/low, gemini-3.1-pro at high/low, `claude-sonnet-4-6`, `claude-opus-4-6-thinking`, `gpt-oss-120b-medium`), none marked default | fill from the CLI's model list — same output, no cheap/main split visible | `-Model`/`--model` passed when given; no default until one is chosen from `agy models` |
+| Claude lane | `sonnet` — dispatcher default (T2); `haiku` (T1) is named per job for mechanical work | `opus` — this skill's tier table (T3; `fable`/T4 stays escalation-only) | `-Model` / `-Effort` on delegate.ps1; restricted to haiku/sonnet/opus/fable |
 
 Closed 2026-09-19: both dispatchers take a model on every lane, fall back to the lane table's cheap default when none is given, and write the model to meta.json and the ledger row. A session that wants a provider's main model names it, and says why in the job's record.
 

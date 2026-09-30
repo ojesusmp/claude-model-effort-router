@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-09-30
+
+### Fixed
+
+- Corrected the Codex row: `gpt-6-luna` is the cheap default and `gpt-5.6-terra` is the T3 main model.
+- Corrected the Grok row: `grok-4.7` is both the cheap default and main model.
+- Re-checked and dated the Antigravity row; its 14 listed models still have no marked default.
+- Corrected the Claude lane row: `sonnet` is the dispatcher default, with `haiku` named per mechanical job and `opus` for T3.
+- Added the CLI-version check sentence for lanes that refuse their default model.
+
 ## [1.5.0] - 2026-09-25
 
 Brings the router's execution rules into line with the fleet Orchestrator
