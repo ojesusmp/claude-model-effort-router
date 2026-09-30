@@ -78,7 +78,7 @@ Update later with the same command.
 ### 2. Git (latest unreleased code)
 
 ```bash
-npm install -g github:ojesusmp/model-effort-router
+npm install -g github:ojesusmp/claude-model-effort-router
 ```
 
 Same postinstall, but pulls straight from the repo's `main` branch.
@@ -90,7 +90,7 @@ Same postinstall, but pulls straight from the repo's `main` branch.
 Inside Claude Code:
 
 ```
-/plugin marketplace add ojesusmp/model-effort-router
+/plugin marketplace add ojesusmp/claude-model-effort-router
 /plugin install model-effort-router@model-effort-router
 ```
 
@@ -272,7 +272,7 @@ Merge them into any existing `PreToolUse`/`PostToolUse` arrays rather than repla
 The package also ships **skill-hardener** (`skills/skill-hardener/`) — the pipeline that hardened this very skill, packaged for reuse on any Claude Code skill: staleness recon (for skills written months ago), gap analysis against five defect classes, rewrite discipline, a mechanical verification gate, adversarial audit rounds until one returns zero, cross-model checks, and a repo sweep. The npm/git installer deploys it to `~/.claude/skills/skill-hardener/` alongside the router, and the plugin marketplace install picks it up from `skills/`.
 
 No install needed in ephemeral sessions (web/mobile): tell Claude to fetch
-`https://raw.githubusercontent.com/ojesusmp/model-effort-router/main/skills/skill-hardener/SKILL.md`
+`https://raw.githubusercontent.com/ojesusmp/claude-model-effort-router/main/skills/skill-hardener/SKILL.md`
 and follow that pipeline against the target skill. Its own gate:
 `cat skills/skill-hardener/SKILL.md skills/skill-hardener/test/hardener-quiz.txt | claude -p --model haiku`
 (expected answers in `skills/skill-hardener/README.md`).
@@ -344,7 +344,7 @@ No. The aliases in the table are examples of the current lineup. The bands (fast
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). Bug reports and feature requests via
-[GitHub Issues](https://github.com/ojesusmp/model-effort-router/issues).
+[GitHub Issues](https://github.com/ojesusmp/claude-model-effort-router/issues).
 
 ## Security
 

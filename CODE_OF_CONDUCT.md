@@ -18,7 +18,7 @@ This Code of Conduct applies within all project spaces â€” issues, pull req
 
 Reports of unacceptable behavior may be submitted privately to the project maintainer:
 
-- **GitHub Issues:** https://github.com/ojesusmp/model-effort-router/issues (use issue template; mark sensitive reports private via the "Security" tab).
+- **GitHub Issues:** https://github.com/ojesusmp/claude-model-effort-router/issues (use issue template; mark sensitive reports private via the "Security" tab).
 - **GitHub Security tab:** open a private vulnerability report for security-sensitive concerns.
 
 All complaints will be reviewed and investigated promptly and fairly. The maintainer is obligated to respect the privacy and security of the reporter.

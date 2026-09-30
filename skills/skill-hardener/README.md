@@ -177,7 +177,7 @@ the pipeline's own delegation advice is written against tiers, not names.
 ## Credits
 
 Method developed while hardening
-[model-effort-router](https://github.com/ojesusmp/model-effort-router) —
+[model-effort-router](https://github.com/ojesusmp/claude-model-effort-router) —
 that repo's v1.3.0 CHANGELOG is a worked example of the full pipeline's
 output.
 
